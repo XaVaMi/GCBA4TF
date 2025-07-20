@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Esquema ferroviario con andén central y semáforos</title>
+<style>
+  body {
+    font-family: 'Helvetica World', sans-serif;
+    background: #fafafa;
+    text-align: center;
+    margin: 20px;
+  }
+  svg {
+    border: 1px solid #ccc;
+    background: white;
+    max-width: 1000px;
+    height: 280px;
+  }
+  .via-tramo {
+    stroke: black;
+    stroke-width: 5;
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: bold;
+    user-select: none;
+  }
+  .semaforo {
+    cursor: pointer;
+    user-select: none;
+  }
+  .semaforo rect {
+    fill: black;
+    rx: 6;
+    ry: 6;
+  }
+  .semaforo circle {
+    stroke: black;
+    stroke-width: 1;
+    fill: #555; /* gris más claro visible */
+    transition: fill 0.3s ease;
+  }
+  .verde.on { fill: green; }
+  .rojo.on { fill: red; }
+  .ambar.on { fill: orange; }
+  .poste {
+    stroke: black;
+    stroke-width: 4;
+  }
+  .anden-central {
+    fill: #ccc;
+    stroke: #555;
+    stroke-width: 2;
+    rx: 5;
+    ry: 5;
+  }
+  .franja-seguridad {
+    fill: #f2c200;
+  }
+  button#reset-btn {
+    background-color: #87ceeb;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 15px auto;
+    display: block;
+    font-family: 'Helvetica World', sans-serif;
+  }
+  button#reset-btn:hover {
+    background-color: #6fb8e6;
+  }
+
+</style>
+</head>
+<body>
+
+<h2 style="font-size: 28px; color: #2c3e50; margin-bottom: 10px; text-align: center;">
+  🚦 🚌 GCBA4TF – El Prat Estació 🚇 🚉
+</h2>
+
+<div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
+  <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Definiciones y lógica de señalización</h2>
+
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🚦 Bloqueo Automático en Vía Doble (BAD):</strong> Sistema de señalización ferroviaria donde cada vía se utiliza exclusivamente en un solo sentido. Por ejemplo, de "A" a "B" en un sentido y de "D" a "E" en el otro. Solo se permite establecer o desbloquear la vía, sin posibilidad de uso en doble sentido.</p>
+
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Circuito de vía:</strong> Cada uno de los tramos en que se divide la vía férrea. Cada tramo tiene una señal (semáforo) que indica si está libre u ocupado. Sirve para detectar la presencia de trenes y garantizar la seguridad entre ellos.</p>
+
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Cambio de aguja (o desvío):</strong> Mecanismo que permite a los trenes cambiar de una vía a otra. Puede estar en posición recta (continúa por la misma vía) o desviada (hacia otra vía). Su configuración afecta la señalización que ve el conductor.</p>
+</div>
+
+
+<table style="border-collapse: collapse; width: 100%; max-width: 900px; margin: 20px auto; font-family: Arial, sans-serif; font-size: 13px; text-align: left;">
+  <thead style="background-color: #333; color: white;">
+    <tr>
+      <th style="padding: 8px; border: 1px solid #999;">Situación del circuito de vía</th>
+      <th style="padding: 8px; border: 1px solid #999;">Color del disco iluminado</th>
+      <th style="padding: 8px; border: 1px solid #999;">Observaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">El circuito está ocupado (bloqueado por un tren)</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🔴 Rojo</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Indica que el tren no debe avanzar</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito posterior a uno con cambio de aguja que sí se desvía</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🔴 Rojo</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">El desvío próximo obliga a detenerse</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito anterior a uno ocupado</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Precaución: hay un tren adelante</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito con cambio de aguja que sí se desvía</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Señaliza el desvío próximo</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito con cambio de aguja que no se desvía</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verde</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Línea recta libre</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito libre (desbloqueado)</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verde</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Vía libre</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuito posterior a un cambio de aguja que no se desvía</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verde</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Sigue recto, vía libre</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ccc;">Señal de itinerario en un cambio de aguja</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar (recto/izq./der.)</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Indica dirección del desvío</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Desafío</h2>
+
+  <p style="font-family: 'Helvetica World', sans-serif;">En el <strong>andén de vía 2</strong> se encuentra un tren estacionado.</p>
+
+  <p style="font-family: 'Helvetica World', sans-serif;">Por <strong>vía 1</strong> (sentido A) está entrando un tren. Este tren necesita un itinerario para llegar y estacionarse en el <strong>último circuito de vía de vía 3</strong> (sentido C).</p>
+
+    <p style="font-family: 'Helvetica World', sans-serif;">Establece el itinerario completo desde la entrada por vía 1 hasta el estacionamiento final en vía 3, modificando las señales según corresponda en cada tramo: bloqueos, desbloqueos e indicaciones de desvío.</p>
+
+  <hr>
+
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>Una vez tengas todas las señales correctamente indicadas</strong> y el itinerario definido:</p>
+
+  <ol style="font-family: 'Helvetica World', sans-serif;">
+    <li>Crea el <strong>password</strong> combinando las señales según el método que ya conoces.</li>
+    <li>Copia ese código en la herramienta <strong>Certitude</strong>.</li>
+    <li>Obtendrás las <strong>coordenadas finales</strong> para completar el desafío.</li>
+  </ol>
+
+  <p style="margin-top: 20px; font-family: 'Helvetica World', sans-serif;"><strong>¡Buena suerte! 🚦</strong></p>
+</div>
+
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+  <button id="reset-btn" style="
+    background: linear-gradient(to right, #2980b9, #6dd5fa);
+    border: none;
+    padding: 12px 26px;
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Helvetica World', sans-serif;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    min-width: 160px;
+  ">🔄 RESET</button>
+
+  <button id="show-password-btn" style="
+    background: linear-gradient(to right, #27ae60, #a3e635);
+    border: none;
+    padding: 12px 26px;
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Helvetica World', sans-serif;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    min-width: 160px;
+  ">🔐 PASSWORD</button>
+</div>
+
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; max-width: 530px; margin: 0 auto;">
+  <pre id="password-output" style="
+    font-family: monospace;
+    font-size: 18px;
+    padding: 15px;
+    text-align: center;
+    border: 2px solid #000;
+    min-height: 50px;
+    width: 2000px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-sizing: border-box;
+    margin: 0;
+    overflow-x: auto;
+  "></pre>
+
+  <button id="copy-btn" style="
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(to right, #ffb347, #ffcc33);
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  ">📑</button>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px;">
+  </div>
+
+
+<svg viewBox="-245 0 1375 275">
+
+  <line class="via-tramo" x1="-150" y1="70" x2="30" y2="70"/>
+  <line class="via-tramo" x1="50" y1="70" x2="230" y2="70"/>
+  <line class="via-tramo" x1="250" y1="70" x2="430" y2="70" style="stroke:red;"/>
+  <line class="via-tramo" x1="450" y1="70" x2="630" y2="70"/>
+  <line class="via-tramo" x1="650" y1="70" x2="830" y2="70"/>
+  <line class="via-tramo" x1="850" y1="70" x2="1030" y2="70"/>
+  <circle cx="-220" cy="70" r="12" fill="#007BFF" />
+  <text x="-220" y="75" class="label" fill="white" text-anchor="middle">E</text>
+  <text x="-200" y="75" class="label">V2 ⇦</text>
+  <text x="1050" y="75" class="label">⇦</text>
+  <circle cx="1105" cy="70" r="12" fill="#007BFF" />
+  <text x="1105" y="75" class="label" fill="white" text-anchor="middle">D</text>
+
+  <rect class="anden-central" x="260" y="85" width="160" height="35"/>
+  <rect class="franja-seguridad" x="260" y="87" width="160" height="2"/>
+  <rect class="franja-seguridad" x="260" y="116" width="160" height="2"/>
+  <text x="288" y="107" class="label" fill="#444">El Prat Estació</text>
+
+  <line class="via-tramo" x1="-150" y1="140" x2="30" y2="140" style="stroke:red;"/>
+  <line class="via-tramo" x1="50" y1="140" x2="230" y2="140"/>
+  <line class="via-tramo" x1="250" y1="140" x2="430" y2="140"/>
+  <line class="via-tramo" x1="450" y1="140" x2="630" y2="140"/>
+  <line class="via-tramo" x1="650" y1="140" x2="830" y2="140"/>
+  <line class="via-tramo" x1="850" y1="140" x2="1030" y2="140"/>
+  <text x="-200" y="145" class="label">V1 ⇨</text>
+  <circle cx="-220" cy="140" r="12" fill="#007BFF" />
+  <text x="-220" y="145" class="label" fill="white" text-anchor="middle">A</text>
+  <text x="1050" y="145" class="label">⇨</text>
+  <circle cx="1105" cy="140" r="12" fill="#007BFF" />
+  <text x="1105" y="145" class="label" fill="white" text-anchor="middle">B</text>
+
+  <line class="via-tramo" x1="250" y1="210" x2="430" y2="210"/>
+  <line class="via-tramo" x1="450" y1="210" x2="630" y2="210"/>
+  <line class="via-tramo" x1="650" y1="210" x2="830" y2="210"/>
+  <line class="via-tramo" x1="850" y1="210" x2="1030" y2="210"/>
+  <text x="-200" y="215" class="label">V3 ⇨</text>
+  <circle cx="1105" cy="210" r="12" fill="#007BFF" />
+  <text x="1105" y="215" class="label" fill="white" text-anchor="middle">C</text>
+
+  <line class="via-tramo" x1="130" y1="140" x2="240" y2="210" />
+  <line class="via-tramo" x1="650" y1="210" x2="775" y2="140"/>
+
+  <g class="semaforo" data-id="12" transform="translate(-10,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="10" transform="translate(190,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="8" transform="translate(390,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="6" transform="translate(590,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="4" transform="translate(790,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="2" transform="translate(990,55)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+
+  <g class="semaforo" data-id="1" transform="translate(-110,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="3" transform="translate(90,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo itinerario" data-id="5" transform="translate(82,178) rotate(180)" data-itinerario="true">
+    <rect x="-16" y="-10" width="32" height="20" fill="black" rx="5" ry="5"/>
+
+    <circle class="ambar izquierdo" cx="-8" cy="0" r="5" stroke="black" stroke-width="1"/>
+    <circle class="ambar derecho" cx="8" cy="0" r="5" stroke="black" stroke-width="1"/>
+
+    <line x1="-13" y1="0" x2="-3" y2="0" stroke="black" stroke-width="2"/>
+
+    <line x1="3" y1="-4" x2="13" y2="4" stroke="black" stroke-width="2"/>
+
+    <line class="poste" x1="16" y1="0" x2="32" y2="0"/>
+  </g>
+
+  <g class="semaforo" data-id="7" transform="translate(290,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="9" transform="translate(490,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="11" transform="translate(690,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="13" transform="translate(890,155) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+
+  <g class="semaforo" data-id="15" transform="translate(290,225) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="17"transform="translate(490,225) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="19" transform="translate(690,225) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo" data-id="21" transform="translate(890,225) rotate(180)">
+    <rect x="-20" y="-10" width="40" height="20"/>
+    <circle class="verde" cx="-12" cy="0" r="5"/>
+    <circle class="rojo" cx="0" cy="0" r="5"/>
+    <circle class="ambar" cx="12" cy="0" r="5"/>
+    <line class="poste" x1="20" y1="0" x2="40" y2="0"/>
+  </g>
+  <g class="semaforo itinerario" data-id="23" transform="translate(683,248) rotate(180)" data-itinerario="true">
+    <rect x="-16" y="-10" width="32" height="20" fill="black" rx="5" ry="5"/>
+
+    <circle class="ambar izquierdo" cx="-8" cy="0" r="5" stroke="black" stroke-width="1"/>
+    <circle class="ambar derecho" cx="8" cy="0" r="5" stroke="black" stroke-width="1"/>
+
+    <line x1="-13" y1="0" x2="-3" y2="0" stroke="black" stroke-width="2"/>
+
+    <line x1="3" y1="4" x2="13" y2="-4" stroke="black" stroke-width="2"/>
+
+    <line class="poste" x1="16" y1="0" x2="32" y2="0"/>
+  </g>
+
+  <g transform="translate(1052,210) rotate(180)">
+    <polygon points="0,-20 0,20 -35,0" fill="black"/>
+
+    <circle cx="-7" cy="-10" r="4" fill="red" stroke="black" stroke-width="0.5"/>
+
+    <circle cx="-7" cy="10" r="4" fill="red" stroke="black" stroke-width="0.5"/>
+
+    <circle cx="-22" cy="0" r="4" fill="red" stroke="black" stroke-width="0.5"/>
+
+    <line class="poste" x1="0" y1="10" x2="10" y2="10" stroke="black" stroke-width="4"/>
+    <line class="poste" x1="0" y1="-10" x2="10" y2="-10" stroke="black" stroke-width="4"/>
+  </g>
+
+</svg>
+
+<script>
+  // Apaga todas las luces de un semáforo
+  function apagarSemaforo(semaforo) {
+    semaforo.querySelectorAll('circle').forEach(c => c.classList.remove('on'));
+  }
+
+  // Cambia al siguiente estado del semáforo normal
+  function siguienteLuzNormal(semaforo) {
+    const luces = ['rojo', 'ambar', 'verde'];
+    const circulos = semaforo.querySelectorAll('circle');
+    let indiceEncendido = -1;
+    circulos.forEach((c, i) => {
+      if (c.classList.contains('on')) indiceEncendido = i;
+    });
+    circulos.forEach(c => c.classList.remove('on'));
+    const siguiente = (indiceEncendido + 1) % luces.length;
+    circulos.forEach(c => {
+      if (c.classList.contains(luces[siguiente])) {
+        c.classList.add('on');
+      }
+    });
+  }
+
+  // Cambia al siguiente estado del semáforo de itinerario
+  function siguienteLuzItinerario(semaforo) {
+    const izq = semaforo.querySelector('circle.izquierdo');
+    const der = semaforo.querySelector('circle.derecho');
+    const estados = [
+      () => { izq.classList.remove('on'); der.classList.remove('on'); },     // Apagado
+      () => { izq.classList.add('on'); der.classList.remove('on'); },         // Solo izquierdo
+      () => { izq.classList.remove('on'); der.classList.add('on'); }          // Solo derecho
+    ];
+    let estadoActual = 0;
+    if (izq.classList.contains('on')) estadoActual = 1;
+    if (der.classList.contains('on')) estadoActual = 2;
+    const siguiente = (estadoActual + 1) % 3;
+    estados[siguiente]();
+  }
+
+  // Inicializa y asigna evento a cada semáforo
+  const semaforos = document.querySelectorAll('.semaforo');
+  semaforos.forEach(semaforo => {
+    apagarSemaforo(semaforo);
+    const esItinerario = semaforo.dataset.itinerario === "true";
+    semaforo.addEventListener('click', () => {
+      if (esItinerario) {
+        siguienteLuzItinerario(semaforo);
+      } else {
+        siguienteLuzNormal(semaforo);
+      }
+    });
+  });
+
+  // Botón RESET
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    semaforos.forEach(semaforo => apagarSemaforo(semaforo));
+    document.getElementById('password-output').textContent = ''; // Borra el password mostrado
+  });
+
+function obtenerEstadoSemaforo(semaforo) {
+  const id = semaforo.dataset.id || 'X';
+
+  if (semaforo.dataset.itinerario === "true") {
+    const izq = semaforo.querySelector('circle.izquierdo');
+    const der = semaforo.querySelector('circle.derecho');
+
+    if (izq.classList.contains('on')) return `S${id}D`;
+    if (der.classList.contains('on')) return `S${id}I`;
+    return `S${id}x`;
+  } else {
+    const luces = ['rojo', 'ambar', 'verde'];
+    for (const color of luces) {
+      if (semaforo.querySelector(`circle.${color}.on`)) {
+        const sigla = color[0].toUpperCase(); // R, A, V
+        return `S${id}${sigla}`;
+      }
+    }
+    return `S${id}x`; // Apagado
+  }
+}
+
+
+document.getElementById('show-password-btn').addEventListener('click', () => {
+  const estados = Array.from(semaforos).map(obtenerEstadoSemaforo);
+  const password = estados.join('');
+  document.getElementById('password-output').textContent = password;
+});
+
+  // Botón COPIAR
+  const copyBtn = document.getElementById('copy-btn');
+    const passwordOutput = document.getElementById('password-output');
+
+    copyBtn.addEventListener('click', () => {
+      const text = passwordOutput.textContent.trim();
+      if (!text) {
+        alert('No hay texto para copiar');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Contraseña copiada al portapapeles');
+      }).catch(() => {
+        alert('Error al copiar');
+      });
+    });
+
+</script>
+
+</body>
+</html>
+
