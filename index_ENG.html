@@ -87,19 +87,22 @@
 <div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
   <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Definitions and Signaling Logic</h2>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🚦 Automatic Double Track Block (BAD):</strong> A railway signaling system where each track is used exclusively in a single direction. For example, from "A" to "B" in one direction and from "D" to "E" in the other. It's only possible to set or unblock the track; double-direction use is not allowed.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🚦 Automatic Block on Double Track (BAD):</strong> Railway signaling system where each track is used exclusively in one direction. For example, from "A" to "B" in one direction and from "D" to "E" in the other. Only track locking/unlocking is allowed, with no possibility of bi-directional use.</p>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Track Circuit:</strong> Each of the sections into which the railway track is divided. Each section has a signal (semaphore) that indicates whether it's clear or occupied. It serves to detect the presence of trains and ensure safety between them.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Track Circuit:</strong> Each section into which the railway track is divided. Each section has a signal (traffic light) indicating whether it is free or occupied. It detects train presence and ensures safety between trains.</p>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Switch (or turnout):</strong> A mechanism that allows trains to change from one track to another. It can be in a straight position (continues on the same track) or a diverted position (towards another track). Its configuration affects the signaling seen by the driver.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Switch (or turnout):</strong> Mechanism allowing trains to change from one track to another. It can be in a straight position (continues on the same track) or diverging (toward another track). Its configuration affects the signal the driver sees.</p>
+
+  <div style="border:1px solid #ccc; border-radius:8px; padding:12px; background:#f9f9f9; margin:15px 0; font-family:'Helvetica World', sans-serif; font-size:16px; color:#333;">
+    <strong>The driver sees the signal of the next track circuit they will enter, not the one the train is currently on.</strong>
+  </div>
 </div>
-
 
 <table style="border-collapse: collapse; width: 100%; max-width: 900px; margin: 20px auto; font-family: Arial, sans-serif; font-size: 13.5px; text-align: left;">
   <thead style="background-color: #333; color: white;">
     <tr>
-      <th style="padding: 8px; border: 1px solid #999;">Track Circuit Situation</th>
-      <th style="padding: 8px; border: 1px solid #999;">Illuminated Disc Color</th>
+      <th style="padding: 8px; border: 1px solid #999;">Track Circuit Status</th>
+      <th style="padding: 8px; border: 1px solid #999;">Disc Color</th>
       <th style="padding: 8px; border: 1px solid #999;">Observations</th>
     </tr>
   </thead>
@@ -107,76 +110,91 @@
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">The circuit is occupied (blocked by a train)</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🔴 Red</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Indicates that the train must not proceed</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Indicates the train must not proceed</td>
     </tr>
     <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Circuit after one with a switch that is diverted</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuit after a switch that is diverging</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🔴 Red</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">The upcoming diversion requires stopping</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">The turnout is not in the nominal travel direction; cannot continue straight</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit before an occupied one</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Amber</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Caution: there's a train ahead</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Caution: train ahead (red block) or end of track</td>
     </tr>
     <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Circuit with a switch that is diverted</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuit with a diverging switch</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Amber</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Signals the upcoming diversion</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Indicates nearby turnout diverges from the nominal direction</td>
     </tr>
     <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Circuit with a switch that is not diverted</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuit with a straight switch</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Green</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Straight line clear</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Clear straight track in nominal direction</td>
     </tr>
     <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Circuit clear (unblocked)</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Free circuit (unlocked)</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Green</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Track clear</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Track is free</td>
     </tr>
     <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Circuit after a switch that is not diverted</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Circuit after a straight switch</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Green</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Continue straight, track clear</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Continues straight, track free in nominal direction</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Route signal at a switch</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Amber with route (straight/left/right)</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Indicates diversion direction</td>
+      <td style="padding: 8px; border: 1px solid #ccc; text-align:center;">
+        <div style="display:flex; justify-content:center; gap:6px; align-items:center;">
+          <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+            <div style="position:absolute; top:4px; left:4px; width:16px; height:16px; transform: rotate(45deg); transform-origin: center;">
+              <div style="border-left:2px solid #000; height:100%;"></div>
+            </div>
+          </div>
+          <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+            <div style="position:absolute; top:-4px; left:4px; width:16px; height:16px; transform: rotate(-45deg); transform-origin: center;">
+              <div style="border-left:2px solid #000; height:100%;"></div>
+            </div>
+          </div>
+          <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+            <div style="position:absolute; top:50%; left:0; width:100%; height:0; border-top:2px solid #000;"></div>
+          </div>
+        </div>
+        Amber with route (right/left/straight)
+      </td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Indicates direction of the turnout</td>
     </tr>
   </tbody>
 </table>
 
-  <div style="max-width: 900px; margin: 0 auto;">
-
+<div style="max-width: 900px; margin: 0 auto;">
   <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Challenge</h2>
 
-  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">On <strong>platform track 2</strong>, there is a train parked.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">On <strong>platform 2 at El Prat de Llobregat</strong> there is a train stopped indicated by a red track circuit.</p>
 
   <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">
-  A train is entering via <strong>track 1</strong>
-  <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">A</span>.
-  This train needs a route to arrive and park on the
-  <strong>last track circuit of track 3</strong>
+  On <strong>track 1</strong>
+  <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">A</span>
+  a train is entering, meaning it has already blocked the first track circuit (red). This train needs a route to reach and stop at the
+  <strong>last track circuit on track 3</strong> before the buffer stop
   <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">C</span>.
   </p>
 
-
-  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">➡️ Indicate the color of the discs on track 2 and establish the complete route from the entrance via track 1 to the final parking on track 3, modifying the signals as appropriate for each section: blocks, unblocks, and diversion indications.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">➡️ Indicate the disc colors on track 2 and track 1 and establish the complete route from the entry on track 1 to the final stop on track 3, modifying signals as needed: blocking, unlocking, and turnout indications.</p>
 
   <hr>
 
-  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px"><strong>Once you have all signals correctly indicated</strong> and the route defined:</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px"><strong>Once all signals are correctly set</strong> and the route is defined:</p>
 
   <ol style="font-family: 'Helvetica World', sans-serif;font-size: 14px">
-    <li>Create the <strong>password</strong> once you have all the signals.</li>
-    <li>Copy the password code you'll get from the tool.</li>
-    <li>Check the answer in <strong>Certitude</strong> and you'll get the <strong>final coordinates</strong>.
+    <li>Create the <strong>password</strong> once all signals are set.</li>
+    <li>Copy the password code obtained from the tool.</li>
+    <li>Check the answer in <strong>Certitude</strong> to get the <strong>final coordinates</strong>.</li>
   </ol>
 
   <p style="margin-top: 20px; font-family: 'Helvetica World', sans-serif;font-size: 14px"><strong>Good luck! 🚦</strong></p>
-
 </div>
+
 
 <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
   <button id="reset-btn" style="
@@ -439,9 +457,18 @@
 
 </svg>
 
-<div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>Additional hint: 10 🟢, 🟠 = 🔴 </strong></p>
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>Additional clues:</strong></p>
+
+  <div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+    <p style="margin-bottom:10px;"><strong>10 🟢, 3 🟠, 3 🔴</strong></p>
+
+    <div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+      <p style="margin-bottom:10px;"><strong>2 🔴 signals on Track 1</strong></p>
+    </div>
+  </div>
 </div>
+
 
 <div style="text-align:center; margin-top: 25px;"><a href="https://www.certitudes.org/certitude?wp=GCBA4TF"><img src="https://www.certitudes.org/logo?wp=GCBA4TF" title="Click to see the list of solvers" /></a>
 
@@ -574,10 +601,42 @@ document.getElementById('show-password-btn').addEventListener('click', () => {
 </script>
 
 
-<!-- Última modificación: {now} -->
-<p style='text-align:center; font-family:"Helvetica World", sans-serif; color: #999; font-size: 14px; margin-top: 40px;'>
-  Last update: 18/08/2025 23:35
+<!-- Last modification: {now} -->
+<p style="text-align:center; font-family:'Helvetica World', sans-serif; color:#777; font-size:12px; margin-top:30px; margin-bottom:10px;">
+  Modification history
 </p>
+<table style="margin:0 auto; font-family:'Helvetica World', sans-serif; font-size:12px; color:#555; border-collapse:collapse; width:50%; text-align:center;">
+  <thead>
+    <tr style="background-color:#f9f9f9; color:#333;">
+      <th style="padding:6px; border:1px solid #ddd;">Date</th>
+      <th style="padding:6px; border:1px solid #ddd;">Time</th>
+      <th style="padding:6px; border:1px solid #ddd;">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">29/07/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">02:45</td>
+      <td style="padding:6px; border:1px solid #ddd;">Creation</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:30</td>
+      <td style="padding:6px; border:1px solid #ddd;">Additional clue</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:35</td>
+      <td style="padding:6px; border:1px solid #ddd;">Correction of additional clue</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">20/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">21:53</td>
+      <td style="padding:6px; border:1px solid #ddd;">Clarifications and clue extension</td>
+    </tr>
+  </tbody>
+</table>
+
 
 </body>
 </html>
