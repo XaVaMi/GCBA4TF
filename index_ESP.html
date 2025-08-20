@@ -87,15 +87,20 @@
 <div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
   <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Definiciones y lógica de señalización</h2>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🚦 Bloqueo Automático en Vía Doble (BAD):</strong> Sistema de señalización ferroviaria donde cada vía se utiliza exclusivamente en un solo sentido. Por ejemplo, de "A" a "B" en un sentido y de "D" a "E" en el otro. Solo se permite establecer o desbloquear la vía, sin posibilidad de uso en doble sentido.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🚦 Bloqueo Automático en Vía Doble (BAD):</strong> Sistema de señalización ferroviaria en el que cada vía se utiliza exclusivamente en un solo sentido. Por ejemplo, de "A" a "B" en un sentido y de "D" a "E" en el otro. Solo se permite establecer o desbloquear la vía, sin posibilidad de uso en doble sentido.</p>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Circuito de vía:</strong> Cada uno de los tramos en que se divide la vía férrea. Cada tramo tiene una señal (semáforo) que indica si está libre u ocupado. Sirve para detectar la presencia de trenes y garantizar la seguridad entre ellos.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Circuito de vía:</strong> Cada uno de los tramos en los que se divide la vía férrea. Cada tramo tiene una señal (semáforo) que indica si está libre u ocupado. Sirve para detectar la presencia de trenes y garantizar la seguridad entre ellos.</p>
 
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Cambio de aguja (o desvío):</strong> Mecanismo que permite a los trenes cambiar de una vía a otra. Puede estar en posición recta (continúa por la misma vía) o desviada (hacia otra vía). Su configuración afecta la señalización que ve el conductor.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Cambio de aguja (o desvío):</strong> Mecanismo que permite a los trenes cambiar de una vía a otra. Puede estar en posición recta (continúa por la misma vía) o desviada (hacia otra vía). Su configuración afecta a la señalización que ve el maquinista.</p>
+
+  <div style="border:1px solid #ccc; border-radius:8px; padding:12px; background:#f9f9f9; margin:15px 0; font-family:'Helvetica World', sans-serif; font-size:16px; color:#333;">
+  <strong>El maquinista ve la señal del siguiente circuito de vía que encontrará antes de invadirlo, no en el que se encuentra.</strong>
+</div>
+
 </div>
 
 
-<table style="border-collapse: collapse; width: 100%; max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13.5px; text-align: left;">
+<table style="border-collapse: collapse; width: 100%; max-width: 900px; margin: 20px auto; font-family: Arial, sans-serif; font-size: 13.5px; text-align: left;">
   <thead style="background-color: #333; color: white;">
     <tr>
       <th style="padding: 8px; border: 1px solid #999;">Situación del circuito de vía</th>
@@ -112,22 +117,22 @@
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito posterior a uno con cambio de aguja que sí se desvía</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🔴 Rojo</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">El desvío próximo obliga a detenerse</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">El desvío no es hacia el sentido nominal de la marcha, no podría seguir recto.</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito anterior a uno ocupado</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Precaución: hay un tren adelante</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Precaución: hay un tren delante (bloqueo, rojo) o fin de vía</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito con cambio de aguja que sí se desvía</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Señaliza el desvío próximo</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Señaliza el próximo desvío distinto al sentido nominal de la marcha</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito con cambio de aguja que no se desvía</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verde</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Línea recta libre</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Línea recta libre en el sentido nominal de la marcha, no se desvía en la aguja.</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito libre (desbloqueado)</td>
@@ -137,47 +142,70 @@
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuito posterior a un cambio de aguja que no se desvía</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verde</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Sigue recto, vía libre</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Sigue recto, vía libre en el sentido nominal de la marcha</td>
     </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Señal de itinerario en un cambio de aguja</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ámbar con itinerario (recto/izq./der.)</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Indica dirección del desvío</td>
-    </tr>
+<tr>
+  <td style="padding: 8px; border: 1px solid #ccc;">Señal de itinerario en un cambio de aguja</td>
+  <td style="padding: 8px; border: 1px solid #ccc; text-align:center;">
+    <div style="display:flex; justify-content:center; gap:6px; align-items:center;">
+      
+      <!-- Ámbar diagonal derecha -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:4px; left:4px; width:16px; height:16px; transform: rotate(45deg); transform-origin: center;">
+          <div style="border-left:2px solid #000; height:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Ámbar diagonal izquierda -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:-4px; left:4px; width:16px; height:16px; transform: rotate(-45deg); transform-origin: center;">
+          <div style="border-left:2px solid #000; height:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Ámbar línea horizontal -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:50%; left:0; width:100%; height:0; border-top:2px solid #000;"></div>
+      </div>
+    </div>
+    Ámbar con itinerario (derecha/izquierda/recto)
+  </td>
+  <td style="padding: 8px; border: 1px solid #ccc;">Indica dirección del desvío</td>
+</tr>
+
   </tbody>
 </table>
 
   <div style="max-width: 900px; margin: 0 auto;">
 
-  <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Desafío</h2>
+  <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Reto</h2>
 
-  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px;">En el <strong>andén de vía 2</strong> se encuentra un tren estacionado.</p>
+  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px">En el <strong>andén de vía 2 de El Prat de Llobregat</strong> hay un tren estacionado indicado con el circuito de vía rojo.</p>
 
-  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px;">
-  Por <strong>vía 1</strong>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">
+  Por la <strong>vía 1</strong>
   <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">A</span>
-  está entrando un tren. Este tren necesita un itinerario para llegar y estacionarse en el
-  <strong>último circuito de vía de vía 3</strong>
+  está entrando un tren, es decir, ya ha bloqueado el primer circuito de vía (rojo). Este tren necesita un itinerario para llegar y estacionarse en el 
+  <strong>último circuito de vía de vía 3</strong> antes de la topera
   <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">C</span>.
   </p>
 
 
-  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px;">➡️ Indica el color de los discos en vía 2 y establece el itinerario completo desde la entrada por vía 1 hasta el estacionamiento final en vía 3, modificando las señales según corresponda en cada tramo: bloqueos, desbloqueos e indicaciones de desvío.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">➡️ Indica el color de los discos en vía 2, vía 1 y establece el itinerario completo desde la entrada por vía 1 hasta el estacionamiento final en vía 3, modificando las señales según corresponda en cada tramo: bloqueos, desbloqueos e indicaciones de desvío.</p>
 
   <hr>
 
-  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px;"><strong>Una vez tengas todas las señales correctamente indicadas</strong> y el itinerario definido:</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px"><strong>Una vez tengas todas las señales correctamente indicadas</strong> y el itinerario definido:</p>
 
-  <ol style="font-family: 'Helvetica World', sans-serif; font-size: 14px;">
-    <li>Crea el <strong>password</strong> una vez tengas todas las señales.</li>
-    <li>Copia el código password que obtiendrás en la herramienta.</li>
-    <li>Comprueba la respuesta en <strong>Certitude</strong> i obtendrás las <strong>coordenadas finales</strong>.</li>
+  <ol style="font-family: 'Helvetica World', sans-serif;font-size: 14px">
+    <li>Crea la <strong>contraseña</strong> una vez tengas todas las señales.</li>
+    <li>Copia el código de la contraseña que obtendrás en la herramienta.</li>
+    <li>Comprueba la respuesta en <strong>Certitude</strong> y obtendrás las <strong>coordenadas finales</strong>.
   </ol>
 
-  <p style="margin-top: 20px; font-family: 'Helvetica World', sans-serif; font-size: 14px;"><strong>¡Buena suerte! 🚦</strong></p>
+  <p style="margin-top: 20px; font-family: 'Helvetica World', sans-serif;font-size: 14px"><strong>¡Mucha suerte! 🚦</strong></p>
 
 </div>
-
 
 
 <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
@@ -441,9 +469,18 @@
 
 </svg>
 
-<div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>Pista adicional: 10 🟢, 🟠 = 🔴 </strong></p>
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>Pistas adicionales:</strong></p>
 </div>
+
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>10 🟢, 3 🟠, 3 🔴</strong></p>
+</div>
+
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>2 discos 🔴 en Vía 1</strong></p>
+</div>
+
 
 <div style="text-align:center; margin-top: 25px;"><a href="https://www.certitudes.org/certitude?wp=GCBA4TF"><img src="https://www.certitudes.org/logo?wp=GCBA4TF" title="Haz click para ver la lista de resolvedores" /></a>
 
@@ -577,9 +614,40 @@ document.getElementById('show-password-btn').addEventListener('click', () => {
 </script>
 
 <!-- Última modificación: {now} -->
-<p style='text-align:center; font-family:"Helvetica World", sans-serif; color: #999; font-size: 14px; margin-top: 40px;'>
-  Última modificación: 18/08/2025 23:38
+<p style="text-align:center; font-family:'Helvetica World', sans-serif; color:#777; font-size:12px; margin-top:30px; margin-bottom:10px;">
+  Histórico de modificaciones
 </p>
+<table style="margin:0 auto; font-family:'Helvetica World', sans-serif; font-size:12px; color:#555; border-collapse:collapse; width:50%; text-align:center;">
+  <thead>
+    <tr style="background-color:#f9f9f9; color:#333;">
+      <th style="padding:6px; border:1px solid #ddd;">Fecha</th>
+      <th style="padding:6px; border:1px solid #ddd;">Hora</th>
+      <th style="padding:6px; border:1px solid #ddd;">Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">29/07/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">02:45</td>
+      <td style="padding:6px; border:1px solid #ddd;">Creación</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:30</td>
+      <td style="padding:6px; border:1px solid #ddd;">Pista adicional</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:35</td>
+      <td style="padding:6px; border:1px solid #ddd;">Corrección pista adicional</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">20/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">21:40</td>
+      <td style="padding:6px; border:1px solid #ddd;">Aclaraciones y ampliación pista</td>
+    </tr>
+  </tbody>
+</table>
 
 </body>
 </html>
