@@ -92,6 +92,11 @@
   <p style="font-family: 'Helvetica World', sans-serif;"><strong>🛤️ Circuit de via:</strong> Cadascun dels trams en què es divideix la via fèrria. Cada tram té un senyal (semàfor) que indica si està lliure o ocupat. Serveix per detectar la presència de trens i garantir la seguretat entre ells.</p>
 
   <p style="font-family: 'Helvetica World', sans-serif;"><strong>🔀 Canvi d'agulla (o desviament):</strong> Mecanisme que permet als trens canviar d'una via a una altra. Pot estar en posició recta (continua per la mateixa via) o desviada (cap a una altra via). La seva configuració afecta la senyalització que veu el conductor.</p>
+
+  <div style="border:1px solid #ccc; border-radius:8px; padding:12px; background:#f9f9f9; margin:15px 0; font-family:'Helvetica World', sans-serif; font-size:16px; color:#333;">
+  <strong>El maquinista veu el senyal del següent circuit de via que es trobarà abans d'invair-lo, no en el que es troba.</strong>
+</div>
+
 </div>
 
 
@@ -112,22 +117,22 @@
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit posterior a un amb canvi d'agulla que sí es desvia</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🔴 Vermell</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">El desviament proper obliga a aturar-se</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">El desviament no es cap al sentit nominal de la marxa, no podria seguir recte.</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit anterior a un ocupat</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ambre</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Precaució: hi ha un tren al davant</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Precaució: hi ha un tren al davant (bloqueig, vermell) o fi de via</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit amb canvi d'agulla que sí es desvia</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ambre</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Senyalitza el desviament proper</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Senyalitza el desviament proper diferent del sentit nominal de la marxa</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit amb canvi d'agulla que no es desvia</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verd</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Línia recta lliure</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Línia recta lliure en el sentit nominal de la marxa, no es desvia en l'agulla.</td>
     </tr>
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit lliure (desbloquejat)</td>
@@ -137,13 +142,37 @@
     <tr>
       <td style="padding: 8px; border: 1px solid #ccc;">Circuit posterior a un canvi d'agulla que no es desvia</td>
       <td style="padding: 8px; border: 1px solid #ccc;">🟢 Verd</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Segueix recte, via lliure</td>
+      <td style="padding: 8px; border: 1px solid #ccc;">Segueix recte, via lliure en el sentit nominal de la marxa</td>
     </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ccc;">Senyal d'itinerari en un canvi d'agulla</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">🟠 Ambre amb itinerari (recte/esq./dreta)</td>
-      <td style="padding: 8px; border: 1px solid #ccc;">Indica direcció del desviament</td>
-    </tr>
+<tr>
+  <td style="padding: 8px; border: 1px solid #ccc;">Senyal d'itinerari en un canvi d'agulla</td>
+  <td style="padding: 8px; border: 1px solid #ccc; text-align:center;">
+    <div style="display:flex; justify-content:center; gap:6px; align-items:center;">
+      
+      <!-- Ámbar diagonal derecha (más abajo todavía) -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:4px; left:4px; width:16px; height:16px; transform: rotate(45deg); transform-origin: center;">
+          <div style="border-left:2px solid #000; height:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Ámbar diagonal izquierda (más arriba todavía) -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:-4px; left:4px; width:16px; height:16px; transform: rotate(-45deg); transform-origin: center;">
+          <div style="border-left:2px solid #000; height:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Ámbar línea horizontal -->
+      <div style="position: relative; width:16px; height:16px; background:orange; border-radius:50%;">
+        <div style="position:absolute; top:50%; left:0; width:100%; height:0; border-top:2px solid #000;"></div>
+      </div>
+    </div>
+    Ambre amb itinerari (dreta/esquerra/recte)
+  </td>
+  <td style="padding: 8px; border: 1px solid #ccc;">Indica direcció del desviament</td>
+</tr>
+
   </tbody>
 </table>
 
@@ -151,18 +180,18 @@
 
   <h2 style="color: #2c3e50; font-family: 'Helvetica World', sans-serif;">Repte</h2>
 
-  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px">A l'<strong>andana de via 2</strong> hi ha un tren estacionat.</p>
+  <p style="font-family: 'Helvetica World', sans-serif; font-size: 14px">A l'<strong>andana de via 2 de El Prat de Llobregat</strong> hi ha un tren estacionat indicat amb el circuit de via vermell.</p>
 
   <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">
   Per <strong>via 1</strong>
   <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">A</span>
-  està entrant un tren. Aquest tren necessita un itinerari per arribar i estacionar-se a l'
-  <strong>últim circuit de via de via 3</strong>
+  està entrant un tren, és a dir, ja ha bloquejat el primer circuit de via (vermell). Aquest tren necessita un itinerari per arribar i estacionar-se a l'
+  <strong>últim circuit de via de via 3</strong>  abans de la topera
   <span style="display: inline-block; background-color: #3498db; color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; font-size: 14px;">C</span>.
   </p>
 
 
-  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">➡️ Indica el color dels discos a via 2 i estableix l'itinerari complet des de l'entrada per via 1 fins a l'estacionament final a via 3, modificant els senyals segons correspongui a cada tram: bloquejos, desbloquejos i indicacions de desviament.</p>
+  <p style="font-family: 'Helvetica World', sans-serif;font-size: 14px">➡️ Indica el color dels discos a via 2, via 1 i estableix l'itinerari complet des de l'entrada per via 1 fins a l'estacionament final a via 3, modificant els senyals segons correspongui a cada tram: bloquejos, desbloquejos i indicacions de desviament.</p>
 
   <hr>
 
@@ -440,9 +469,15 @@
 
 </svg>
 
-<div style="max-width: 900px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
-  <p style="font-family: 'Helvetica World', sans-serif;"><strong>Pista addicional: 10 🟢, 🟠 = 🔴 </strong></p>
-</div>
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>Pistes addicionals:</strong></p>
+
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>10 🟢, 3 🟠, 3 🔴</strong></p>
+
+<div style="max-width: 500px; margin: 20px auto; font-family: 'Helvetica World', sans-serif; font-size: 13px; line-height: 1.6; color: #333; text-align:center;">
+  <p style="margin-bottom:10px;"><strong>2 discs 🔴 a Via 1</strong></p>
+
 
 <div style="text-align:center; margin-top: 25px;"><a href="https://www.certitudes.org/certitude?wp=GCBA4TF"><img src="https://www.certitudes.org/logo?wp=GCBA4TF" title="Clica per veure la llista de resolutors" /></a>
 
@@ -574,10 +609,41 @@ document.getElementById('show-password-btn').addEventListener('click', () => {
 
 </script>
 
-<!-- Última modificación: {now} -->
-<p style='text-align:center; font-family:"Helvetica World", sans-serif; color: #999; font-size: 14px; margin-top: 40px;'>
-  Darrera modificació: 18/08/2025 23:34
+<!-- Última modificació: {now} -->
+<p style="text-align:center; font-family:'Helvetica World', sans-serif; color:#777; font-size:12px; margin-top:30px; margin-bottom:10px;">
+  Històric de modificacions
 </p>
+<table style="margin:0 auto; font-family:'Helvetica World', sans-serif; font-size:12px; color:#555; border-collapse:collapse; width:50%; text-align:center;">
+  <thead>
+    <tr style="background-color:#f9f9f9; color:#333;">
+      <th style="padding:6px; border:1px solid #ddd;">Data</th>
+      <th style="padding:6px; border:1px solid #ddd;">Hora</th>
+      <th style="padding:6px; border:1px solid #ddd;">Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">29/07/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">02:45</td>
+      <td style="padding:6px; border:1px solid #ddd;">Creació</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:30</td>
+      <td style="padding:6px; border:1px solid #ddd;">Pista addicional</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">18/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">23:35</td>
+      <td style="padding:6px; border:1px solid #ddd;">Correcció pista addicional</td>
+    </tr>
+    <tr>
+      <td style="padding:6px; border:1px solid #ddd;">20/08/2025</td>
+      <td style="padding:6px; border:1px solid #ddd;">21:40</td>
+      <td style="padding:6px; border:1px solid #ddd;">Aclariments i ampliació pista</td>
+    </tr>
+  </tbody>
+</table>
 
 </body>
 </html>
